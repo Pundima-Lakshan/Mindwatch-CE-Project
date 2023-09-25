@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import time
+import pandas as pd
 
 mp_face_mesh = mp.solutions.face_mesh
 
@@ -17,6 +18,10 @@ drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
 # Open the MP4 video file
 cap = cv2.VideoCapture('D:\\downloadd\\Neck and Shoulder Pain Relief in Seconds.mp4')
+
+# Before the while loop
+direction_data = []
+
 
 while cap.isOpened():
     success, image = cap.read()
@@ -74,6 +79,8 @@ while cap.isOpened():
             y = angles[1] * 360
             z = angles[2] * 360
 
+            text = "Forward"
+
             if y < -10:
                 text = "Looking Left"
             elif y > 10:
@@ -84,6 +91,9 @@ while cap.isOpened():
                 text = "Looking Up"
             else:
                 text = "Forward"
+            
+            duration = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+            direction_data.append((duration, text))
 
             nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
 
@@ -114,6 +124,13 @@ while cap.isOpened():
 
     if cv2.waitKey(1) & 0xFF == 27:
         break
+
+# Create a DataFrame from the direction_data list
+df = pd.DataFrame(direction_data, columns=["Duration (s)", "Direction"])
+
+# Save the DataFrame to a CSV file
+df.to_csv('direction_data.csv', index=False)
+
 
 cap.release()
 cv2.destroyAllWindows()
