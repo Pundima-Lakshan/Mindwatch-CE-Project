@@ -22,6 +22,13 @@ cap = cv2.VideoCapture('D:\\downloadd\\Neck and Shoulder Pain Relief in Seconds.
 # Before the while loop
 direction_data = []
 
+# Define the duration range (in seconds)
+min_duration = 30  # Minimum duration
+max_duration = 50  # Maximum duration
+
+# Initialize variables to track the total duration and forward duration
+total_duration = 0
+forward_duration = 0
 
 while cap.isOpened():
     success, image = cap.read()
@@ -87,13 +94,20 @@ while cap.isOpened():
                 text = "Looking Right"
             elif x < -10:
                 text = "Looking Down"
-            elif x > 10:
+            elif x > 15:
                 text = "Looking Up"
             else:
                 text = "Forward"
             
             duration = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
-            direction_data.append((duration, text))
+            # Check if the duration is within the specified range
+            if min_duration <= duration <= max_duration:
+                direction_data.append((duration, text))
+
+                total_duration += 1  # Increment the total duration
+
+                if text == "Forward":
+                    forward_duration += 1  # Increment the forward duration
 
             nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
 
@@ -125,11 +139,16 @@ while cap.isOpened():
     if cv2.waitKey(1) & 0xFF == 27:
         break
 
+# Calculate the percentage of time looking forward
+percentage_forward = (forward_duration / total_duration) * 100 if total_duration > 0 else 0
+
+print(f"Percentage of time looking forward: {percentage_forward:.2f}%")
+
 # Create a DataFrame from the direction_data list
 df = pd.DataFrame(direction_data, columns=["Duration (s)", "Direction"])
 
 # Save the DataFrame to a CSV file
-df.to_csv('direction_data.csv', index=False)
+#df.to_csv('direction_data.csv', index=False)
 
 
 cap.release()
