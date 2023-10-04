@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import cv2
 
 
 def unit_vector(vector):
@@ -68,6 +69,29 @@ def plot_two_line_vectors(v1, v2, xlabel="X-axis", ylabel="Y-axis"):
 
     plt.quiver(*origin, V[:, 0], V[:, 1], color=["b", "g"], scale=5)
     plt.show()
+
+
+def draw_infinite_line_on_image(
+    gradient, intercept, imageHeight, imageWidth, uploaded_image
+):
+    image = np.array(uploaded_image)
+
+    width, height = imageWidth, imageHeight
+
+    # Calculate the start and end points of the line based on the image size
+    x1 = 0
+    y1 = int(gradient * x1 + intercept)
+    x2 = width - 1
+    y2 = int(gradient * x2 + intercept)
+
+    # Define the line color (BGR format) and thickness
+    line_color = (255, 0, 0)  # Red color in RGB
+    line_thickness = 2
+
+    # Draw the infinite line on the image
+    cv2.line(image, (x1, y1), (x2, y2), line_color, line_thickness)
+
+    return image
 
 
 def main():
