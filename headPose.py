@@ -3,155 +3,179 @@ import mediapipe as mp
 import numpy as np
 import time
 import pandas as pd
+import os
 
-mp_face_mesh = mp.solutions.face_mesh
+def analyze_head_pose(video_path,min_duration,max_duration):
 
-# Create a FaceMesh object with confidence settings
-face_mesh = mp_face_mesh.FaceMesh(
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5
-)
+    output_directory = 'my_streamlit_app/data/head_pose_analysis/precentage'
+    output_directory2 = 'my_streamlit_app/data/head_pose_analysis/graph_data'
 
-mp_drawing = mp.solutions.drawing_utils
+    mp_face_mesh = mp.solutions.face_mesh
 
-drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
+    # Create a FaceMesh object with confidence settings
+    face_mesh = mp_face_mesh.FaceMesh(
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5
+    )
 
-# Open the MP4 video file
-cap = cv2.VideoCapture('D:\\downloadd\\Neck and Shoulder Pain Relief in Seconds.mp4')
+    mp_drawing = mp.solutions.drawing_utils
 
-# Before the while loop
-direction_data = []
+    drawing_spec = mp_drawing.DrawingSpec(thickness=1, circle_radius=1)
 
-# Define the duration range (in seconds)
-min_duration = 30  # Minimum duration
-max_duration = 50  # Maximum duration
+    # Open the video file
+    cap = cv2.VideoCapture(video_path)
 
-# Initialize variables to track the total duration and forward duration
-total_duration = 0
-forward_duration = 0
+    # Extract the filename from the video path
+    video_filename = os.path.basename(video_path)
+    video_name, _ = os.path.splitext(video_filename)
 
-while cap.isOpened():
-    success, image = cap.read()
+    csv_filename = f'{video_name}_direction_data.csv'
 
-    if not success:
-        break
+    # Before the while loop
+    direction_data = []
 
-    start = time.time()
+    # Define the duration range (in seconds)
+    # min_duration = 30  # Minimum duration
+    # max_duration = 50  # Maximum duration
 
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # Initialize variables to track the total duration and forward duration
+    total_duration = 0
+    forward_duration = 0
 
-    image.flags.writeable = False
+    while cap.isOpened():
+        success, image = cap.read()
 
-    results = face_mesh.process(image)
+        if not success:
+            break
 
-    image.flags.writeable = True
+        start = time.time()
 
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    img_h, img_w, img_c = image.shape
-    face_3d = []
-    face_2d = []
+        image.flags.writeable = False
 
-    if results.multi_face_landmarks:
-        for face_landmarks in results.multi_face_landmarks:
-            for idx, lm in enumerate(face_landmarks.landmark):
-                if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
-                    if idx == 1:
-                        nose_2d = (lm.x * img_w, lm.y * img_h)
-                        nose_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
-                    x, y = int(lm.x * img_w), int(lm.y * img_h)
+        results = face_mesh.process(image)
 
-                    face_2d.append([x, y])
-                    face_3d.append([x, y, lm.z])
+        image.flags.writeable = True
 
-            face_2d = np.array(face_2d, dtype=np.float64)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-            face_3d = np.array(face_3d, dtype=np.float64)
+        img_h, img_w, img_c = image.shape
+        face_3d = []
+        face_2d = []
 
-            focal_length = 1 * img_w
+        if results.multi_face_landmarks:
+            for face_landmarks in results.multi_face_landmarks:
+                for idx, lm in enumerate(face_landmarks.landmark):
+                    if idx == 33 or idx == 263 or idx == 1 or idx == 61 or idx == 291 or idx == 199:
+                        if idx == 1:
+                            nose_2d = (lm.x * img_w, lm.y * img_h)
+                            nose_3d = (lm.x * img_w, lm.y * img_h, lm.z * 3000)
+                        x, y = int(lm.x * img_w), int(lm.y * img_h)
 
-            cam_matrix = np.array([[focal_length, 0, img_h / 2],
-                                    [0, focal_length, img_w / 2],
-                                    [0, 0, 1]])
+                        face_2d.append([x, y])
+                        face_3d.append([x, y, lm.z])
 
-            dist_matrix = np.zeros((4, 1), dtype=np.float64)
+                face_2d = np.array(face_2d, dtype=np.float64)
 
-            success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
+                face_3d = np.array(face_3d, dtype=np.float64)
 
-            rmat, jac = cv2.Rodrigues(rot_vec)
+                focal_length = 1 * img_w
 
-            angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
+                cam_matrix = np.array([[focal_length, 0, img_h / 2],
+                    [0, focal_length, img_w / 2],
+                    [0, 0, 1]])
 
-            x = angles[0] * 360
-            y = angles[1] * 360
-            z = angles[2] * 360
 
-            text = "Forward"
+                dist_matrix = np.zeros((4, 1), dtype=np.float64)
 
-            if y < -10:
-                text = "Looking Left"
-            elif y > 10:
-                text = "Looking Right"
-            elif x < -10:
-                text = "Looking Down"
-            elif x > 15:
-                text = "Looking Up"
-            else:
+                success, rot_vec, trans_vec = cv2.solvePnP(face_3d, face_2d, cam_matrix, dist_matrix)
+
+                rmat, jac = cv2.Rodrigues(rot_vec)
+
+                angles, mtxR, mtxQ, Qx, Qy, Qz = cv2.RQDecomp3x3(rmat)
+
+                x = angles[0] * 360
+                y = angles[1] * 360
+                z = angles[2] * 360
+
                 text = "Forward"
-            
-            duration = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
-            # Check if the duration is within the specified range
-            if min_duration <= duration <= max_duration:
-                direction_data.append((duration, text))
 
-                total_duration += 1  # Increment the total duration
+                if y < -10:
+                    text = "Looking Left"
+                elif y > 10:
+                    text = "Looking Right"
+                elif x < -10:
+                    text = "Looking Down"
+                elif x > 15:
+                    text = "Looking Up"
+                else:
+                    text = "Forward"
 
-                if text == "Forward":
-                    forward_duration += 1  # Increment the forward duration
+                duration = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+                # Check if the duration is within the specified range
+                if min_duration <= duration <= max_duration:
+                    direction_data.append((duration, text))
 
-            nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
+                    total_duration += 1  # Increment the total duration
 
-            p1 = (int(nose_2d[0]), int(nose_2d[1]))
-            p2 = (int(nose_2d[0] + y * 10), int(nose_2d[1] - x * 100))
+                    if text == "Forward":
+                        forward_duration += 1  # Increment the forward duration
 
-            cv2.line(image, p1, p2, (255, 0, 0), 3)
+                nose_3d_projection, jacobian = cv2.projectPoints(nose_3d, rot_vec, trans_vec, cam_matrix, dist_matrix)
 
-            cv2.putText(image, text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
-            cv2.putText(image, "x: " + str(np.round(x, 2)), (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.putText(image, "y: " + str(np.round(x, 2)), (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.putText(image, "z: " + str(np.round(x, 2)), (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                p1 = (int(nose_2d[0]), int(nose_2d[1]))
+                p2 = (int(nose_2d[0] + y * 10), int(nose_2d[1] - x * 100))
 
-        end = time.time()
-        totalTime = end - start
-        fps = 1 / totalTime
+                cv2.line(image, p1, p2, (255, 0, 0), 3)
 
-        cv2.putText(image, f'FPS: {int(fps)}', (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
+                cv2.putText(image, text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 2)
+                cv2.putText(image, "x: " + str(np.round(x, 2)), (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                cv2.putText(image, "y: " + str(np.round(x, 2)), (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                cv2.putText(image, "z: " + str(np.round(x, 2)), (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-        mp_drawing.draw_landmarks(
-            image=image,
-            landmark_list=face_landmarks,
-            landmark_drawing_spec=drawing_spec,
-            connection_drawing_spec=drawing_spec
-        )
+            end = time.time()
+            totalTime = end - start
+            fps = 1 / totalTime
 
-    cv2.imshow('Head Pose Estimation', image)
+            cv2.putText(image, f'FPS: {int(fps)}', (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
-    if cv2.waitKey(1) & 0xFF == 27:
-        break
+            mp_drawing.draw_landmarks(
+                image=image,
+                landmark_list=face_landmarks,
+                landmark_drawing_spec=drawing_spec,
+                connection_drawing_spec=drawing_spec
+            )
 
-# Calculate the percentage of time looking forward
-percentage_forward = (forward_duration / total_duration) * 100 if total_duration > 0 else 0
+        cv2.imshow('Head Pose Estimation', image)
 
-print(f"Percentage of time looking forward: {percentage_forward:.2f}%")
+        if cv2.waitKey(1) & 0xFF == 27:
+            break
 
-# Create a DataFrame from the direction_data list
-df = pd.DataFrame(direction_data, columns=["Duration (s)", "Direction"])
+    # Calculate the percentage of time looking forward
+    percentage_forward = (forward_duration / total_duration) * 100 if total_duration > 0 else 0
 
-# Save the DataFrame to a CSV file
-#df.to_csv('direction_data.csv', index=False)
+    print(f"Percentage of time looking forward: {percentage_forward:.2f}%")
+    
+    # Save percentage_forward to a CSV file
+    percentage_csv_filename = os.path.join(output_directory, f'{video_name}_percentage_forward.csv')
+    percentage_df = pd.DataFrame({"min duration": [min_duration],"max duration": [max_duration], "Percentage Forward": [percentage_forward]})
+    percentage_df.to_csv(percentage_csv_filename, index=False)
 
+    # Create a DataFrame from the direction_data list
+    df = pd.DataFrame(direction_data, columns=["Duration (s)", "Direction"])
 
-cap.release()
-cv2.destroyAllWindows()
+    # Construct the full path to the CSV file
+    csv_file_path = os.path.join(output_directory2, csv_filename)
 
-#iooo
+    # Save the DataFrame to the CSV file
+    df.to_csv(csv_file_path, index=False)
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+# Example usage:
+video_path = 'D:\\downloadd\\Neck and Shoulder Pain Relief in Seconds.mp4'
+min_duration = 30
+max_duration = 40
+analyze_head_pose(video_path,min_duration,max_duration)

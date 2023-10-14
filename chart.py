@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 # Load the direction data from the CSV file
 df = pd.read_csv('direction_data.csv')
 
-# Filter the data to only include "Forward" direction
-forward_data = df[df['Direction'] == 'Forward']
+# Create a binary column for "Looking Forward"
+df['Looking Forward'] = (df['Direction'] == 'Forward').astype(int)
 
-# Create a bar chart
+# Create a line chart
 plt.figure(figsize=(10, 6))
-plt.bar(forward_data['Duration (s)'], height=1, width=1, color='blue')
+plt.plot(df['Duration (s)'], df['Looking Forward'], color='blue', marker='o', linestyle='-')
 plt.xlabel('Duration (s)')
-plt.ylabel('Count')
-plt.title('Duration of Forward Direction')
+plt.ylabel('Looking Forward (1) / Not Looking Forward (0)')
+plt.title('Looking Forward vs. Not Looking Forward')
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.show()
