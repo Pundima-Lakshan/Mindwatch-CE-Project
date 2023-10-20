@@ -69,7 +69,7 @@ def show_head_pose_analysis():
         
         labels = ["Percentage Forward", "Remaining"]
         sizes = [percentage_value, 100 - percentage_value]
-        colors = ['lightgreen', 'lightred']
+        colors = ['green', 'red']
 
         fig, ax = plt.subplots()
         ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
