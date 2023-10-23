@@ -3,7 +3,7 @@ import glob
 import threading
 import time
 import subprocess
-
+from Aggressive_behavior_detection import Aggressive_behavior_detection
 
 # CHANGE THESE TWO ACCORDINGLY
 # Directory path for video files and log file
@@ -39,6 +39,14 @@ def gaze_detection(video_file):
 def aggressive_behavior_detection(video_file):
     log_execution(video_file, 'aggressive_behavior_detection')
     # aggressive_behavior_detection logic here
+    input_video_path = video_file  # Set the input video path
+    output_csv_path = 'output.csv'  # Set the output CSV path
+    frames_to_analyze = 5  # Set the number of frames to analyze
+    model = 16  # Set the model parameter
+
+    # Create an instance of the Aggressive_behavior_detection class
+    processor = Aggressive_behavior_detection(input_video_path, output_csv_path, frames_to_analyze, model)
+    processor.process_video()
 
 
 def laying_detection(video_file):
