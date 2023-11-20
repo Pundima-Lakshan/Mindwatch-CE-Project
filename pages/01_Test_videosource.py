@@ -1,41 +1,36 @@
 import streamlit as st
 import cv2
+import json
 
-if "mw" in st.session_state:
-    mw = st.session_state.mw
-else:
-    st.error("Please go to Home page and initialize the app.")
-    st.stop()
+# Read the JSON file
+with open("./training_config.json", "r") as file:
+    config_data = json.load(file)
 
-if mw.isError:
-    st.error("Something went wrong. Please restart the app.")
-    st.stop()
+cap = cv2.VideoCapture(config_data["video_source"])
 
 latest_frame = st.empty()
 error_text = st.empty()
+stop_button = st.button("STOP")
 
-if mw.cap is None:
-    error_text.error("Can't open video source.")
-    st.stop()
-
-isRelease = st.button("Relase video source")
-
-while mw.cap.isOpened():
-    ret, frame = mw.cap.read()
+# while the camera is open
+while cap.isOpened():
+    # Read feed
+    ret, frame = cap.read()
 
     if not ret:
-        error_text.error("Can't receive frame. Exiting...")
-        st.stop()
+        error_text.markdown(
+            "<p style='color: red;'>Can't receive frame (stream end?). Exiting ...</p>",
+            unsafe_allow_html=True,
+        )
+        print("Can't receive frame (stream end?). Exiting ...")
         break
 
     # Flip the image horizontally
     frame = cv2.flip(frame, 1)
 
     latest_frame.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), channels="RGB")
-    if isRelease:
+    if stop_button:
         break
 
-if isRelease:
-    mw.cap.release()
-    cv2.destroyAllWindows()
-    st.stop()
+cap.release()
+cv2.destroyAllWindows()
