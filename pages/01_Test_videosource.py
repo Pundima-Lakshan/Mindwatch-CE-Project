@@ -18,11 +18,7 @@ while cap.isOpened():
     ret, frame = cap.read()
 
     if not ret:
-        error_text.markdown(
-            "<p style='color: red;'>Can't receive frame (stream end?). Exiting ...</p>",
-            unsafe_allow_html=True,
-        )
-        print("Can't receive frame (stream end?). Exiting ...")
+        error_text.error("Can't receive frame (stream end?). Exiting ...")
         break
 
     # Flip the image horizontally
