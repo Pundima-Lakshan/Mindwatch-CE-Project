@@ -1,0 +1,12 @@
+{
+    "video_source": 0,
+    "min_detection_confidence": 0.5,
+    "min_tracking_confidence": 0.5,
+    "data_path": "D:/Projects/1 CEProject/git/Mindwatch-CE-Project/MP_Data",
+    "logs_path": "D:/Projects/1 CEProject/git/Mindwatch-CE-Project/Logs",
+    "actions": "billrolling,shivering",
+    "no_sequences": 30,
+    "sequence_length": 30,
+    "start_folder": 0,
+    "wait_time": 500
+}
