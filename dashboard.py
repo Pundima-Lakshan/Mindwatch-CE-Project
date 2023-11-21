@@ -1,13 +1,9 @@
-"""
-docs
-"""
-
 import streamlit as st
 import torch
 from PIL import Image
 from transformers import pipeline
 
-MODEL_PATH = "E:/violence images/vilt-b32-finetuned-vqa"
+MODEL_PATH = "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\vilt-b32-finetuned-vqa"
 model = pipeline("visual-question-answering", model=MODEL_PATH)
 
 # Function to load and display the image
