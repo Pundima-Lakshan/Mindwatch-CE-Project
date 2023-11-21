@@ -3,14 +3,17 @@ import glob
 import threading
 import time
 import subprocess
-from Aggressive_behavior_detection import Aggressive_behavior_detection_Class
+from Functions import Aggressive_behavior_detection
+from Functions import Head_pose 
+
 
 # CHANGE THESE TWO ACCORDINGLY
 # Directory path for video files and log file
-directory_path = "E:/violenceDetection"
-log_file_path = "execution_log.txt"
-output_csv_path = "output.csv"  # for violence detect temp
+directory_path = 'E:/violenceDetection'
+log_file_path = 'execution_log.txt'
 
+Aggressive_behavior_detection_Class = Aggressive_behavior_detection.Aggressive_behavior_detection_Class
+analyze_head_pose = Head_pose.analyze_head_pose
 
 def create_log_file_if_not_exists():
     if not os.path.isfile(log_file_path):
@@ -32,8 +35,9 @@ def shaking_detection(video_file):
     # shaking_detection logic here
 
 
-def gaze_detection(video_file):
-    log_execution(video_file, "gaze_detection")
+def head_pose_detection(video_file):
+    analyze_head_pose(video_file,120200,120204)
+    log_execution(video_file, 'head_pose_detection')
     # gaze_detection logic here
 
 
@@ -81,7 +85,7 @@ if __name__ == "__main__":
     for video_file in video_files:
         for detection_function in [
             shaking_detection,
-            gaze_detection,
+            head_pose_detection,
             aggressive_behavior_detection,
             laying_detection,
         ]:
