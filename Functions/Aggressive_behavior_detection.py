@@ -6,6 +6,7 @@ import queue
 import csv  # Import the csv module
 import os
 
+
 class Aggressive_behavior_detection_Class:
     def __init__(self, input_path, frames_to_analyze, model):
         self.input_path = input_path
@@ -19,10 +20,14 @@ class Aggressive_behavior_detection_Class:
         else:
             print("GPU is not available")
 
-        self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        self.device = (
+            torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        )
 
-        self.clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
-        if (model == 16):
+        self.clip_processor = CLIPProcessor.from_pretrained(
+            "openai/clip-vit-base-patch32"
+        )
+        if model == 16:
             self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch16")
         else:
             self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
@@ -32,10 +37,13 @@ class Aggressive_behavior_detection_Class:
         # Generate output CSV file path based on the input video file name
         video_file_name = os.path.splitext(os.path.basename(input_path))[0]
         self.output_csv_path = f"Results/Aggressive_behavior_detection/{video_file_name}_aggressive_behavior_result.csv"
-        
 
-    def get_probabilities_for_frame(self, image, labels=['violent scene', 'non-violent scene']):
-        inputs = self.clip_processor(text=labels, images=image, return_tensors="pt", padding=True).to(self.device)
+    def get_probabilities_for_frame(
+        self, image, labels=["violent scene", "non-violent scene"]
+    ):
+        inputs = self.clip_processor(
+            text=labels, images=image, return_tensors="pt", padding=True
+        ).to(self.device)
         outputs = self.clip_model(**inputs)
         logits_per_image = outputs.logits_per_image
         probs = logits_per_image.softmax(dim=1)
@@ -47,8 +55,8 @@ class Aggressive_behavior_detection_Class:
         last_scores = []
         frame_count = 0
 
-        with open(self.output_csv_path, mode='w', newline='') as csv_file:
-            fieldnames = ['Frame Number', 'Violence Probability']
+        with open(self.output_csv_path, mode="w", newline="") as csv_file:
+            fieldnames = ["Frame Number", "Violence Probability"]
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
             writer.writeheader()
 
@@ -80,7 +88,9 @@ class Aggressive_behavior_detection_Class:
                 if key == ord("q"):
                     break
 
-                writer.writerow({'Frame Number': frame_count, 'Violence Probability': final_score})
+                writer.writerow(
+                    {"Frame Number": frame_count, "Violence Probability": final_score}
+                )
 
         vs.release()
         cv2.destroyAllWindows()
@@ -89,10 +99,13 @@ class Aggressive_behavior_detection_Class:
             frame_num, score = self.output_queue.get()
             print(f"Frame {frame_num}: Violent Probability - {score}")
 
+
 if __name__ == "__main__":
-    input_video_path = '1.mp4'
-    output_csv_path = 'output.csv'
+    input_video_path = "1.mp4"
+    output_csv_path = "output.csv"
     frames_to_analyze = 5
     model = 16
-    processor = Aggressive_behavior_detection_Class(input_video_path, frames_to_analyze, model)
+    processor = Aggressive_behavior_detection_Class(
+        input_video_path, frames_to_analyze, model
+    )
     processor.process_video()
