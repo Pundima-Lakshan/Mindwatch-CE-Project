@@ -26,7 +26,7 @@ class Aggressive_behavior_detection:
             self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch16")
         else:
             self.clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-        
+
         self.clip_model = self.clip_model.to(self.device)
 
         # Generate output CSV file path based on the input video file name

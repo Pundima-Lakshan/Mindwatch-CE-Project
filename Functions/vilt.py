@@ -7,9 +7,11 @@ import os
 import csv
 
 # Load the ViltForQuestionAnswering model and feature extractor
-MODEL_PATH = (
-    "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\vilt-b32-finetuned-vqa"
-)
+MODEL_PATH = "vilt-b32-finetuned-vqa"
+MODEL_PATH = os.path.join(MODEL_PATH)
+
+print(MODEL_PATH)
+
 model = pipeline("visual-question-answering", model=MODEL_PATH)
 
 
