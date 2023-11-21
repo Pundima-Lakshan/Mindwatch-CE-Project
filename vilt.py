@@ -9,7 +9,7 @@ MODEL_PATH = "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\vilt-b32-fin
 model = pipeline("visual-question-answering", model=MODEL_PATH)
 
 # Function to ask questions about each frame in a video
-def ask_questions_video(video_path, questions):
+def ask_questions_video(video_path, questions, type):
     # Open the video file
     cap = cv2.VideoCapture(video_path)
 
@@ -39,6 +39,11 @@ def ask_questions_video(video_path, questions):
         frame = Image.fromarray(frame)
         out = ask_question_image(frame, questions)
 
+        if type == "mood":
+            pass
+        elif type == "sleeping":
+            pass
+
     # Release the video capture object
     cap.release()
 
@@ -47,11 +52,8 @@ def ask_question_image(image, questions):
 
     questions_list = questions.split("? ")
     for question in questions_list:
-        # print(question)
         ans = model(image=image, question=question)
         out.append(ans)
-        print(ans)
-        print("")
 
     return out
 
