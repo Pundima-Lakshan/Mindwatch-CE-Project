@@ -29,8 +29,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
         return 0
 
     
-    output_directory = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\head_pose_analysis\percentage'
-    output_directory2 = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\Head Pose'
+    output_directory2 = 'Results\Head_pose'
 
     mp_face_mesh = mp.solutions.face_mesh
 
@@ -51,7 +50,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
     video_filename = os.path.basename(video_path)
     video_name, _ = os.path.splitext(video_filename)
 
-    csv_filename = f'{video_name}_direction_data.csv'
+    csv_filename = f'{video_name}_Head_pose_result.csv'
 
     # Before the while loop
     direction_data = []
@@ -146,8 +145,8 @@ def analyze_head_pose(video_path,min_duration,max_duration):
                     # Combine hours, minutes, and seconds into an integer in the format HHMMSS
                     total_time_int = time_hour * 10000 + time_minute * 100 + time_temp
 
-                    # Convert total_time_int to a string in HHMMSS format
-                    total_time_str = f'{int(total_time_int):06d}'
+                   # Convert total_time_int to a string in HH:MM:SS format
+                    total_time_str = f'{time_hour:02d}:{time_minute:02d}:{int(time_temp):02d}'
 
                     direction_data.append((total_time_str, text))
 
@@ -182,7 +181,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
                 connection_drawing_spec=drawing_spec
             )
 
-        cv2.imshow('Head Pose Estimation', image)
+        #cv2.imshow('Head Pose Estimation', image)
 
         if cv2.waitKey(1) & 0xFF == 27:
             break
@@ -198,7 +197,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
     #percentage_df.to_csv(percentage_csv_filename, index=False)
 
     # Create a DataFrame from the direction_data list
-    df = pd.DataFrame(direction_data, columns=["Duration (s)", "Direction"])
+    df = pd.DataFrame(direction_data, columns=["Time ", "Direction"])
 
     # Construct the full path to the CSV file
     csv_file_path = os.path.join(output_directory2, csv_filename)
