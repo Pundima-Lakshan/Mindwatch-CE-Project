@@ -10,10 +10,7 @@ import csv
 MODEL_PATH = "vilt-b32-finetuned-vqa"
 MODEL_PATH = os.path.join(MODEL_PATH)
 
-print(MODEL_PATH)
-
 model = pipeline("visual-question-answering", model=MODEL_PATH)
-
 
 # Function to ask questions about each frame in a video
 def ask_questions_video(video_path, questions, type):
@@ -29,7 +26,11 @@ def ask_questions_video(video_path, questions, type):
 
     # Generate output CSV file path based on the input video file name
     video_file_name = os.path.splitext(os.path.basename(video_path))[0]
-    output_csv_path = f"Results\Sleeping\{video_file_name}_{type}_result.csv"
+
+    if type == "mood":
+        output_csv_path = f"Results\Mood\{video_file_name}_{type}_result.csv"
+    elif type == "sleeping":
+        output_csv_path = f"Results\Sleeping\{video_file_name}_{type}_result.csv"
 
     with open(output_csv_path, mode="w", newline="") as csv_file:
         if type == "mood":
