@@ -30,10 +30,6 @@ df = pd.read_csv(file_path)
 # Apply the function to create a new 'Highest Mood' column
 df['Highest Mood'] = df['Moods'].apply(get_highest_mood)
 
-# Convert 'Frame Number' to numeric
-df['Frame Number'] = pd.to_numeric(df['Frame Number'], errors='coerce')
-
-# Create a bar chart for mood counts over time
-st.title('Mood Counts over Time')
-mood_counts_over_time = df.groupby(['Frame Number', 'Highest Mood']).size().unstack().fillna(0)
-st.bar_chart(mood_counts_over_time)
+# Display the table with 'Frame Number' and 'Highest Mood'
+st.write("Data Table:")
+st.table(df[['Frame Number', 'Highest Mood']])

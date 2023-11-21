@@ -25,14 +25,14 @@ file_path = os.path.join(directory_path, selected_file)
 # Load the data
 df = get_data_from_csv(file_path)
 
-# Display the data table
-st.write("Data Table:")
-st.write(df)
-
 # Create line chart for 'Sleeping Probability (Yes)'
-st.title('Sleeping Probability (Yes) Graph')
+st.write('Sleeping Probability (Yes) Graph')
 st.line_chart(df['sleeping Probability (Yes)'].rename('Probability (Yes)').reset_index(drop=True))
 
-# Create line chart for 'Sleeping Probability (No)'
-st.title('Sleeping Probability (No) Graph')
-st.line_chart(df['sleeping Probability (No)'].rename('Probability (No)').reset_index(drop=True))
+# Checkbox for showing/hiding the data table
+show_data_table = st.checkbox("Show Data Table")
+
+# Display the data table if the checkbox is ticked
+if show_data_table:
+    st.write("Data Table:")
+    st.write(df)
