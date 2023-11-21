@@ -19,7 +19,7 @@ if input_directory and not os.path.isdir(input_directory):
     error = True
 
 # Output file directory
-output_directory = st.text_input("Output File(s) Directory:")
+output_directory = st.text_input("Output File(s) Directory:", help='hello')
 if output_directory and not os.path.isdir(output_directory):
     st.error('The provided folder does not exist. Please provide a valid folder path.')
     error = True
@@ -27,10 +27,10 @@ if output_directory and not os.path.isdir(output_directory):
 # Checkbox selection
 st.write("Select Required Detection(s):")
 
-Shaking_Detection_cb = st.checkbox("Shaking Detection", value=True)
-Gaze_Detection_cb = st.checkbox("Gaze Detection", value=True)
-Aggressive_Behavior_Detection_cb = st.checkbox("Aggressive Behavior Detection", value=True)
-Laying_Detection_cb = st.checkbox("Laying Detection", value=True)
+Shaking_Detection_cb = st.checkbox("Shaking Detection", value=True, key="Shaking_Detection_disabled")
+Gaze_Detection_cb = st.checkbox("Gaze Detection", value=True, key="Gaze_Detection_disabled")
+Aggressive_Behavior_Detection_cb = st.checkbox("Aggressive Behavior Detection", value=True, key="Aggressive_Behavior_Detection_disabled")
+Laying_Detection_cb = st.checkbox("Laying Detection", value=True, key="Laying_Detection_disabled")
 
 if not(Shaking_Detection_cb or Gaze_Detection_cb or Aggressive_Behavior_Detection_cb or Laying_Detection_cb):
     st.error('Select at least one detection.')
@@ -47,9 +47,15 @@ st.subheader('Gaze Detection Settings', divider='grey')
 st.subheader('Aggressive Behavior Detection Settings', divider='grey')
 
 Aggressive_Behavior_Detection_model = st.radio(
-    "Model",
+    "Model:",
     ["16", "32"],
-    captions = ["More acuurate, less speed", "Less accurate, more speed"])
+    captions = ["More accurate, less speed", "Less accurate, more speed"],
+    disabled=not(Aggressive_Behavior_Detection_cb))
+
+Aggressive_Behavior_Detection_frames_to_analyze = st.slider(
+    'Frames to analyze:', 
+    1, 100, 10,
+    disabled=not(Aggressive_Behavior_Detection_cb))
 
 
 #Laying Detection Settings
