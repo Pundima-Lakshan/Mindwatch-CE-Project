@@ -143,8 +143,9 @@ def analyze_head_pose(video_path,min_duration,max_duration):
                     # Combine hours, minutes, and seconds into an integer in the format HHMMSS
                     total_time_int = time_hour * 10000 + time_minute * 100 + time_temp
 
-                    # Convert total_time_int to a string in HHMMSS format
-                    total_time_str = f'{int(total_time_int):06d}'
+
+                    # Convert total_time_int to a string in HH:MM:SS format
+                    total_time_str = f'{time_hour:02d}:{time_minute:02d}:{int(time_temp):02d}'
 
                     direction_data.append((total_time_str, text))
 
@@ -195,7 +196,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
     percentage_df.to_csv(percentage_csv_filename, index=False)
 
     # Create a DataFrame from the direction_data list
-    df = pd.DataFrame(direction_data, columns=["Duration (s)", "Direction"])
+    df = pd.DataFrame(direction_data, columns=["Time ", "Direction"])
 
     # Construct the full path to the CSV file
     csv_file_path = os.path.join(output_directory2, csv_filename)
@@ -208,8 +209,8 @@ def analyze_head_pose(video_path,min_duration,max_duration):
 
 # Example usage:
 video_path = 'D:\\downloadd\\video\\cam1_20231121120005_20231121120102.mp4'
-min_duration = 120200
-max_duration = 120204
+min_duration = 120000
+max_duration = 120104
 
 # Extract the file name from the path
 file_name = os.path.basename(video_path)
@@ -230,7 +231,7 @@ end_time = end_hour * 10000 + end_minute * 100 + end_second
 
 print(start_time,end_time)
 
-if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration)):
+if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration) or (end_time<max_duration and start_time>=min_duration)):
     analyze_head_pose(video_path,min_duration,max_duration)
 else:
     print(0)
