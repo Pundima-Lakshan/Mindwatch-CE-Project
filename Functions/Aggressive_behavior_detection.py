@@ -6,7 +6,7 @@ import queue
 import csv  # Import the csv module
 import os
 
-class Aggressive_behavior_detection:
+class Aggressive_behavior_detection_Class:
     def __init__(self, input_path, frames_to_analyze, model):
         self.input_path = input_path
         self.frames_to_analyze = frames_to_analyze
@@ -31,7 +31,8 @@ class Aggressive_behavior_detection:
 
         # Generate output CSV file path based on the input video file name
         video_file_name = os.path.splitext(os.path.basename(input_path))[0]
-        self.output_csv_path = f"{video_file_name}_aggressive_behavior_result.csv"
+        self.output_csv_path = f"Results/Aggressive_behavior_detection/{video_file_name}_aggressive_behavior_result.csv"
+        
 
     def get_probabilities_for_frame(self, image, labels=['violent scene', 'non-violent scene']):
         inputs = self.clip_processor(text=labels, images=image, return_tensors="pt", padding=True).to(self.device)
@@ -93,5 +94,5 @@ if __name__ == "__main__":
     output_csv_path = 'output.csv'
     frames_to_analyze = 5
     model = 16
-    processor = Aggressive_behavior_detection(input_video_path, frames_to_analyze, model)
+    processor = Aggressive_behavior_detection_Class(input_video_path, frames_to_analyze, model)
     processor.process_video()
