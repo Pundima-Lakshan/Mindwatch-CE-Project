@@ -154,6 +154,10 @@ cython_debug/
 
 # Resource files for development
 MP_Data/
+TT_Data/
+W_Data/
+Logs/
+vilt-b32-finetuned-vqa/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
