@@ -23,7 +23,7 @@ st.set_page_config(page_title="Head Pose Dashboard", page_icon=":pinched_fingers
 st.title("Head Pose Dashboard")
 
 # Directory Path
-directory_path = r"D:\Git\Mindwatch-CE-Project\Resources\Head pose"
+directory_path = r"D:\Git\Mindwatch-CE-Project\Results\Head pose"
 
 # List all CSV files in the directory
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]
