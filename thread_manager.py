@@ -3,12 +3,14 @@ import glob
 import threading
 import time
 import subprocess
+from Aggressive_behavior_detection import Aggressive_behavior_detection_Class 
 
 
 # CHANGE THESE TWO ACCORDINGLY
 # Directory path for video files and log file
 directory_path = 'E:/violenceDetection'
 log_file_path = 'execution_log.txt'
+output_csv_path = 'output.csv' #for violence detect temp
 
 
 def create_log_file_if_not_exists():
@@ -37,6 +39,8 @@ def gaze_detection(video_file):
 
 
 def aggressive_behavior_detection(video_file):
+    Aggressive_behavior_detection_object = Aggressive_behavior_detection_Class(video_file, 5, 16)
+    Aggressive_behavior_detection_object.process_video()
     log_execution(video_file, 'aggressive_behavior_detection')
     # aggressive_behavior_detection logic here
 
