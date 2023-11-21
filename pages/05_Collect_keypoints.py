@@ -3,183 +3,140 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import json
+import streamlit as st
+from common import (
+    CONFIG_FILE,
+    mediapipe_detection,
+    draw_styled_landmarks,
+    extract_keypoints,
+)
 
-# Read the JSON file
-with open("./training_config.json", "r") as file:
+st.set_page_config(layout="wide", page_title="MindWatch")
+
+with open(CONFIG_FILE, "r") as file:
     config_data = json.load(file)
-
-mp_holistic = mp.solutions.holistic  # Holistic model # type: ignore
-mp_drawing = mp.solutions.drawing_utils  # Drawing utilities # type: ignore
 
 # Path for exported data, numpy arrays
 DATA_PATH = os.path.join(config_data["data_path"])
 
-# Actions that we try to detect
-actions = np.array([item for item in config_data["actions"].split(",")])
-
-# Thirty videos worth of data
+actions = np.array([item for item in config_data["actions"].split(", ")])
 no_sequences = config_data["no_sequences"]
-
-# Videos are going to be 30 frames in length
 sequence_length = config_data["sequence_length"]
-
-# Folder start
 start_folder = config_data["start_folder"]
-
-
-def mediapipe_detection(image, model):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
-    image.flags.writeable = False  # Image is no longer writeable
-    results = model.process(image)  # Make prediction
-    image.flags.writeable = True  # Image is now writeable
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # COLOR COVERSION RGB 2 BGR
-    return image, results
-
-
-def draw_styled_landmarks(image, results):
-    # Draw face connections
-    mp_drawing.draw_landmarks(
-        image,
-        results.face_landmarks,
-        mp_holistic.FACEMESH_CONTOURS,
-        mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
-        mp_drawing.DrawingSpec(color=(80, 256, 121), thickness=1, circle_radius=1),
-    )
-    # Draw pose connections
-    mp_drawing.draw_landmarks(
-        image,
-        results.pose_landmarks,
-        mp_holistic.POSE_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=(80, 22, 10), thickness=2, circle_radius=4),
-        mp_drawing.DrawingSpec(color=(80, 44, 121), thickness=2, circle_radius=2),
-    )
-    # Draw left hand connections
-    mp_drawing.draw_landmarks(
-        image,
-        results.left_hand_landmarks,
-        mp_holistic.HAND_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
-        mp_drawing.DrawingSpec(color=(121, 44, 250), thickness=2, circle_radius=2),
-    )
-    # Draw right hand connections
-    mp_drawing.draw_landmarks(
-        image,
-        results.right_hand_landmarks,
-        mp_holistic.HAND_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=4),
-        mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
-    )
-
-
-def extract_keypoints(results):
-    pose = (
-        np.array(
-            [
-                [res.x, res.y, res.z, res.visibility]
-                for res in results.pose_landmarks.landmark
-            ]
-        ).flatten()
-        if results.pose_landmarks
-        else np.zeros(33 * 4)
-    )
-    face = (
-        np.array(
-            [[res.x, res.y, res.z] for res in results.face_landmarks.landmark]
-        ).flatten()
-        if results.face_landmarks
-        else np.zeros(468 * 3)
-    )
-    lh = (
-        np.array(
-            [[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]
-        ).flatten()
-        if results.left_hand_landmarks
-        else np.zeros(21 * 3)
-    )
-    rh = (
-        np.array(
-            [[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]
-        ).flatten()
-        if results.right_hand_landmarks
-        else np.zeros(21 * 3)
-    )
-    return np.concatenate([pose, face, lh, rh])
-
 
 cap = cv2.VideoCapture(config_data["video_source"])
 
-# Set mediapipe model
-with mp_holistic.Holistic(
-    min_detection_confidence=0.5, min_tracking_confidence=0.5
-) as holistic:  # Loop through actions
-    for action in actions:
-        # Loop through sequences aka videos
-        for sequence in range(start_folder, start_folder + no_sequences):
-            # Loop through video length aka sequence length
-            for frame_num in range(sequence_length):
-                # Read feed
-                ret, frame = cap.read()
+start_button = st.button("START")
 
-                # Make detections
-                image, results = mediapipe_detection(frame, holistic)
+isStopped = False
 
-                # Draw landmarks
-                draw_styled_landmarks(image, results)
+mp_holistic = mp.solutions.holistic  # Holistic model
 
-                # wait logic
-                if frame_num == 0:
-                    cv2.putText(
-                        image,
-                        "STARTING COLLECTION",
-                        (120, 200),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (0, 255, 0),
-                        4,
-                        cv2.LINE_AA,
-                    )
-                    cv2.putText(
-                        image,
-                        "Collecting frames for {} Video Number {}".format(
-                            action, sequence
-                        ),
-                        (15, 12),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5,
-                        (0, 0, 255),
-                        1,
-                        cv2.LINE_AA,
-                    )
-                    # Show to screen
-                    cv2.imshow("OpenCV Feed", image)
-                    cv2.waitKey(config_data["wait_time"])
-                else:
-                    cv2.putText(
-                        image,
-                        "Collecting frames for {} Video Number {}".format(
-                            action, sequence
-                        ),
-                        (15, 12),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5,
-                        (0, 0, 255),
-                        1,
-                        cv2.LINE_AA,
-                    )
-                    # Show to screen
-                    cv2.imshow("OpenCV Feed", image)
+if start_button:
+    state_text = st.empty()
+    latest_frame = st.empty()
+    error_text = st.empty()
+    stop_button = st.button("STOP")
 
-                # NEW Export keypoints
-                keypoints = extract_keypoints(results)
-                npy_path = os.path.join(
-                    DATA_PATH, action, str(sequence), str(frame_num)
-                )
+    with mp_holistic.Holistic(
+        min_detection_confidence=config_data["min_detection_confidence"],
+        min_tracking_confidence=config_data["min_tracking_confidence"],
+    ) as holistic:
+        if stop_button:
+            isStopped = True
 
-                np.save(npy_path, keypoints)
+        for action in actions:
+            if isStopped:
+                break
 
-                # Break gracefully
-                if cv2.waitKey(10) & 0xFF == ord("q"):
+            for sequence in range(start_folder, start_folder + no_sequences):
+                if isStopped:
                     break
 
+                for frame_num in range(sequence_length):
+                    if isStopped:
+                        break
+
+                    if cap.isOpened():
+                        ret, frame = cap.read()
+                    else:
+                        error_text.error(
+                            "Can't receive frame (stream end?). Exiting ... closed"
+                        )
+                        error_text.error(f"{action}, {sequence}, {frame_num}")
+                        break
+
+                    if not ret:
+                        error_text.error(
+                            "Can't receive frame (stream end?). Exiting ... frame"
+                        )
+                        error_text.error(f"{action}, {sequence}, {frame_num}")
+                        break
+
+                    # Make detections
+                    image, results = mediapipe_detection(frame, holistic)
+
+                    # Draw landmarks
+                    draw_styled_landmarks(image, results)
+
+                    # wait logic
+                    if frame_num == 0:
+                        # Flip the image horizontally
+                        image = cv2.flip(image, 1)
+
+                        # Calculate the width and height of the text box
+                        (text_width, text_height) = cv2.getTextSize(
+                            "STARTING COLLECTION", cv2.FONT_HERSHEY_SIMPLEX, 1, 4
+                        )[0]
+
+                        # Set the text start position
+                        text_x, text_y = 120, 200
+
+                        # Draw a rectangle filled with color
+                        cv2.rectangle(
+                            image,
+                            (text_x - 15, text_y + 15),
+                            (text_x + text_width + 15, text_y - text_height - 15),
+                            (102, 0, 255),
+                            -1,
+                        )
+
+                        cv2.putText(
+                            img=image,
+                            text="STARTING COLLECTION",
+                            org=(120, 200),
+                            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                            fontScale=1,
+                            color=(255, 255, 255),
+                            thickness=4,
+                            lineType=cv2.LINE_AA,
+                        )
+
+                        latest_frame.image(
+                            cv2.cvtColor(image, cv2.COLOR_BGR2RGB), channels="RGB"
+                        )
+                        cv2.waitKey(config_data["wait_time"])
+                    else:
+                        # Flip the image horizontally
+                        image = cv2.flip(image, 1)
+
+                        latest_frame.image(
+                            cv2.cvtColor(image, cv2.COLOR_BGR2RGB), channels="RGB"
+                        )
+
+                    keypoints = extract_keypoints(results)
+                    npy_path = os.path.join(
+                        DATA_PATH, action, str(sequence), str(frame_num)
+                    )
+
+                    np.save(npy_path, keypoints)
+
+                    state_text.info(
+                        "Collecting frames for {} Video Number {}".format(
+                            action, sequence
+                        )
+                    )
+
+        cap.release()
+
     cap.release()
-    cv2.destroyAllWindows()

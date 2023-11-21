@@ -1,21 +1,19 @@
 import cv2
 import mediapipe as mp
-import numpy as np
 import streamlit as st
 import json
-from common import mediapipe_detection
+from common import CONFIG_FILE, mediapipe_detection
 
-mp_holistic = mp.solutions.holistic  # Holistic model
-mp_drawing = mp.solutions.drawing_utils  # Drawing utilities
+st.set_page_config(layout="wide", page_title="MindWatch")
 
-with open("./training_config.json", "r") as file:
+with open(CONFIG_FILE, "r") as file:
     config_data = json.load(file)
 
 cap = cv2.VideoCapture(config_data["video_source"])
 
 if not cap.isOpened():
-    st.write("Cannot open camera")
-    exit()
+    st.error("Can't open video source.")
+    st.stop()
 
 col1, col2 = st.columns(2)
 
@@ -26,6 +24,8 @@ with col1:
 
 with col2:
     latest_result = st.empty()
+
+mp_holistic = mp.solutions.holistic  # Holistic model
 
 # Set mediapipe model
 with mp_holistic.Holistic(
@@ -38,11 +38,7 @@ with mp_holistic.Holistic(
         ret, frame = cap.read()
 
         if not ret:
-            error_text.markdown(
-                "<p style='color: red;'>Can't receive frame (stream end?). Exiting ...</p>",
-                unsafe_allow_html=True,
-            )
-            print("Can't receive frame (stream end?). Exiting ...")
+            error_text.error("Can't receive frame (stream end?). Exiting ...")
             break
 
         # Make detections
@@ -53,13 +49,10 @@ with mp_holistic.Holistic(
 
         latest_frame.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), channels="RGB")
         latest_result.write(results)
+
         if stop_button:
             break
 
-        # Draw landmarks
-        # draw_styled_landmarks(image, results)
-
     cap.release()
-    cv2.destroyAllWindows()
+
 cap.release()
-cv2.destroyAllWindows()

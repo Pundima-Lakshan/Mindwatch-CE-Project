@@ -1,9 +1,12 @@
 import streamlit as st
 import cv2
 import json
+from common import CONFIG_FILE
+
+st.set_page_config(layout="wide", page_title="MindWatch")
 
 # Read the JSON file
-with open("./training_config.json", "r") as file:
+with open(CONFIG_FILE, "r") as file:
     config_data = json.load(file)
 
 cap = cv2.VideoCapture(config_data["video_source"])
@@ -29,4 +32,3 @@ while cap.isOpened():
         break
 
 cap.release()
-cv2.destroyAllWindows()
