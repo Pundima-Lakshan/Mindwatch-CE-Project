@@ -1,41 +1,38 @@
 import streamlit as st
-import cv2
+import pandas as pd
+import os
 
-if "mw" in st.session_state:
-    mw = st.session_state.mw
-else:
-    st.error("Please go to Home page and initialize the app.")
-    st.stop()
+# Function to load data from CSV file
+def get_data_from_csv(file_path):
+    df = pd.read_csv(file_path)
+    return df
 
-if mw.isError:
-    st.error("Something went wrong. Please restart the app.")
-    st.stop()
+# Directory Path
+directory_path = r"Results\Aggressive_behavior_detection"
 
-latest_frame = st.empty()
-error_text = st.empty()
+# List all CSV files in the directory
+csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]
 
-if mw.cap is None:
-    error_text.error("Can't open video source.")
-    st.stop()
+# Streamlit app
+st.title('Select CSV File and Display Data')
 
-isRelease = st.button("Relase video source")
+# File selection dropdown
+selected_file = st.selectbox("Select a CSV file", csv_files)
 
-while mw.cap.isOpened():
-    ret, frame = mw.cap.read()
+# Full file path
+file_path = os.path.join(directory_path, selected_file)
 
-    if not ret:
-        error_text.error("Can't receive frame. Exiting...")
-        st.stop()
-        break
+# Load the data
+df = get_data_from_csv(file_path)
 
-    # Flip the image horizontally
-    frame = cv2.flip(frame, 1)
+# Draw line chart for 'Violence Probability'
+st.title('Violence Probability Graph')
+st.line_chart(df['Violence Probability'].rename('Probability').reset_index(drop=True))
 
-    latest_frame.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), channels="RGB")
-    if isRelease:
-        break
+# Checkbox for showing/hiding the data table
+show_data_table = st.checkbox("Show Data Table")
 
-if isRelease:
-    mw.cap.release()
-    cv2.destroyAllWindows()
-    st.stop()
+# Display the data table if the checkbox is ticked
+if show_data_table:
+    st.write("Data Table:")
+    st.write(df)
