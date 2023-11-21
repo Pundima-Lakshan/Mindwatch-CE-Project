@@ -1,5 +1,7 @@
-from vilt import ask_questions_video
+from Functions import vilt
 
+ask_questions_video = vilt.ask_questions_video
+ 
 # VIDEO_PATH = "D:\\Projects\\1 CEProject\\resources\\videos\\2.mp4"
 QUESTION_TEXTS = "Is the person sleeping?"
 
