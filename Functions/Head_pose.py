@@ -230,7 +230,7 @@ end_time = end_hour * 10000 + end_minute * 100 + end_second
 
 print(start_time,end_time)
 
-if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration)):
+if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration) or (end_time<max_duration and start_time>=min_duration)):
     analyze_head_pose(video_path,min_duration,max_duration)
 else:
     print(0)
