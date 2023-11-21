@@ -2,12 +2,24 @@ import streamlit as st
 import json
 import pandas as pd
 import os
+import subprocess
 
 # Initialize error variable
 error = False
 
 # Title
 st.title("Home")
+
+start=st.button("start")
+if start:
+    script_path = 'start.py'
+
+    # Run the script using subprocess
+    try:
+        subprocess.run(['python', script_path], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+
 
 # General Settings
 st.subheader('General Settings', divider='grey')
