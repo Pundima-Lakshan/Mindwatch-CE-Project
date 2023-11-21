@@ -101,3 +101,8 @@ if start_button:
             model.save(os.path.join(weights_path, "action.h5"))
 
         st.success("Model saved")
+
+st.warning(
+    "If there is no TensorBoard, please run the following command on terminal in the root directory."
+)
+st.code("tensorboard --logdir ./Logs  --host localhost")

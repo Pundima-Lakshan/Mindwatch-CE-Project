@@ -80,5 +80,6 @@ plt.xlabel("Predicted label")
 
 st.pyplot(plt, use_container_width=True)
 
-st.write(multilabel_confusion_matrix(ytrue, yhat))
-st.write(acs)
+# st.write(multilabel_confusion_matrix(ytrue, yhat))
+st.warning(f"Actions {actions}")
+st.info(f"Accuracy measure: {acs}")
