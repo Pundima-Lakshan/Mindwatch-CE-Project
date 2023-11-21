@@ -29,8 +29,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
         return 0
 
     
-    output_directory = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\head_pose_analysis\percentage'
-    output_directory2 = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\Head Pose'
+    output_directory2 = 'Results\Head_pose'
 
     mp_face_mesh = mp.solutions.face_mesh
 
@@ -51,7 +50,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
     video_filename = os.path.basename(video_path)
     video_name, _ = os.path.splitext(video_filename)
 
-    csv_filename = f'{video_name}_direction_data.csv'
+    csv_filename = f'{video_name}_Head_pose_result.csv'
 
     # Before the while loop
     direction_data = []
@@ -182,7 +181,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
                 connection_drawing_spec=drawing_spec
             )
 
-        cv2.imshow('Head Pose Estimation', image)
+        #cv2.imshow('Head Pose Estimation', image)
 
         if cv2.waitKey(1) & 0xFF == 27:
             break
