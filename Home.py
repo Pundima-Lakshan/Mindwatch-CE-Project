@@ -1,15 +1,16 @@
 import streamlit as st
-from common import MindWatch
+from Pages.temp import show as temp
 
-if "mw" not in st.session_state:
-    st.session_state.mw = MindWatch()
-    if st.session_state.mw.isError:
-        st.stop()
-    else:
-        st.success("MindWatch initialized.")
+from Pages.head_pose import show as pose
 
-mw = st.session_state.mw
+def main():
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio("Go to", ["Home", "About"])
 
-if mw.isError:
-    st.error("Something went wrong. Please restart the app.")
-    st.stop()
+    if page == "Home":
+        pose()
+    elif page == "About":
+        temp()
+
+if __name__ == "__main__":
+    main()
