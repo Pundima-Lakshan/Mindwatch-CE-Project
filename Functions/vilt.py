@@ -31,11 +31,19 @@ def ask_questions_video(video_path, questions, type):
         output_csv_path = f"Results\Mood\{video_file_name}_{type}_result.csv"
     elif type == "sleeping":
         output_csv_path = f"Results\Sleeping\{video_file_name}_{type}_result.csv"
+    elif type == "standing_on_bed":
+        output_csv_path = f"Results\StandingOnBed\{video_file_name}_{type}_result.csv"
 
     with open(output_csv_path, mode="w", newline="") as csv_file:
         if type == "mood":
             fieldnames = ["Frame Number", "Moods"]
         elif type == "sleeping":
+            fieldnames = [
+                "Frame Number",
+                f"{type} Probability (Yes)",
+                f"{type} Probability (No)",
+            ]
+        elif type == "standing_on_bed":
             fieldnames = [
                 "Frame Number",
                 f"{type} Probability (Yes)",
@@ -74,6 +82,21 @@ def ask_questions_video(video_path, questions, type):
                 writer.writerow({"Frame Number": frame_count, "Moods": str(moods_list)})
                 print(f"Frame {frame_count}: Moods - {moods_list}")
             elif type == "sleeping":
+                out = out[0]
+                for _, item in enumerate(out):
+                    if item["answer"] == "yes":
+                        yes_score = item["score"]
+                    elif item["answer"] == "no":
+                        no_score = item["score"]
+                writer.writerow(
+                    {
+                        "Frame Number": frame_count,
+                        f"{type} Probability (Yes)": yes_score,
+                        f"{type} Probability (No)": no_score,
+                    }
+                )
+                print(f"Frame {frame_count}: {type} Probability - {yes_score}")
+            elif type == "standing_on_bed":
                 out = out[0]
                 for _, item in enumerate(out):
                     if item["answer"] == "yes":
