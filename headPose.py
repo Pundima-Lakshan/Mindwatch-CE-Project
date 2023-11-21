@@ -4,11 +4,26 @@ import numpy as np
 import time
 import pandas as pd
 import os
+import re
 
 def analyze_head_pose(video_path,min_duration,max_duration):
 
-    output_directory = 'my_streamlit_app/data/head_pose_analysis/precentage'
-    output_directory2 = 'my_streamlit_app/data/head_pose_analysis/graph_data'
+    # Extract the file name from the path
+    file_name = os.path.basename(video_path)
+
+    # Define the regex pattern
+    pattern = r'cam1_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).mp4'
+
+    # Match the pattern in the file name
+    match = re.match(pattern, file_name)
+
+    if match:
+        # Extract the matched groups
+        start_year, start_month, start_day, start_hour, start_minute, start_second, end_year, end_month, end_day, end_hour, end_minute, end_second = map(int, match.groups())
+
+    
+    output_directory = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\head_pose_analysis\percentage'
+    output_directory2 = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\head_pose_analysis\graph_data'
 
     mp_face_mesh = mp.solutions.face_mesh
 
@@ -114,8 +129,25 @@ def analyze_head_pose(video_path,min_duration,max_duration):
 
                 duration = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
                 # Check if the duration is within the specified range
-                if min_duration <= duration <= max_duration:
-                    direction_data.append((duration, text))
+                #if min_duration <= duration <= max_duration:
+                if  duration >= 0:
+                    time_hour = start_hour
+                    time_minute = start_minute
+                    time_temp = duration + start_second
+                    if(time_temp>= 60):
+                        time_temp = time_temp-60
+                        time_minute + 1
+                        if(time_minute >=60):
+                            time_minute = time_minute-1
+                            time_hour = time_hour +1
+                    # Combine hours, minutes, and seconds into an integer in the format HHMMSS
+                    total_time_int = time_hour * 10000 + time_minute * 100 + time_temp
+
+                    # Convert total_time_int to a string in HHMMSS format
+                    total_time_str = f'{int(total_time_int):06d}'
+
+                    direction_data.append((total_time_str, text))
+
 
                     total_duration += 1  # Increment the total duration
 
@@ -175,7 +207,31 @@ def analyze_head_pose(video_path,min_duration,max_duration):
     cv2.destroyAllWindows()
 
 # Example usage:
-video_path = 'D:\\downloadd\\Neck and Shoulder Pain Relief in Seconds.mp4'
-min_duration = 30
-max_duration = 40
-analyze_head_pose(video_path,min_duration,max_duration)
+video_path = 'D:\\downloadd\\video\\cam1_20231121120005_20231121120102.mp4'
+min_duration = 120200
+max_duration = 120204
+
+# Extract the file name from the path
+file_name = os.path.basename(video_path)
+
+# Define the regex pattern
+pattern = r'cam1_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).mp4'
+
+# Match the pattern in the file name
+match = re.match(pattern, file_name)
+
+if match:
+    # Extract the matched groups
+    start_year, start_month, start_day, start_hour, start_minute, start_second, end_year, end_month, end_day, end_hour, end_minute, end_second = map(int, match.groups())
+
+# Combine hours, minutes, and seconds into an integer in the format HHMMSS
+start_time = start_hour * 10000 + start_minute * 100 + start_second
+end_time = end_hour * 10000 + end_minute * 100 + end_second
+
+print(start_time,end_time)
+
+if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration)):
+    analyze_head_pose(video_path,min_duration,max_duration)
+else:
+    print(0)
+
