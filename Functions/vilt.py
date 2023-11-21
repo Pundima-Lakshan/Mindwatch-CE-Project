@@ -27,7 +27,7 @@ def ask_questions_video(video_path, questions, type):
 
     # Generate output CSV file path based on the input video file name
     video_file_name = os.path.splitext(os.path.basename(video_path))[0]
-    output_csv_path = f"{video_file_name}_{type}_result.csv"
+    output_csv_path = f"Results\Sleeping\{video_file_name}_{type}_result.csv"
 
     with open(output_csv_path, mode="w", newline="") as csv_file:
         if type == "mood":
