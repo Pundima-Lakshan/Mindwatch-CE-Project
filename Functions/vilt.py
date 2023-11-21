@@ -65,6 +65,11 @@ def ask_questions_video(video_path, questions, type):
 
             if type == "mood":
                 out = out[0]
+                moods_list = []
+                for _, item in enumerate(out):
+                    moods_list.append([item["answer"], item["score"]])
+                writer.writerow({"Frame Number": frame_count, "Moods": str(moods_list)})
+                print(f"Frame {frame_count}: Moods - {moods_list}")
             elif type == "sleeping":
                 out = out[0]
                 for _, item in enumerate(out):
