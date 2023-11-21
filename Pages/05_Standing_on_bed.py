@@ -8,7 +8,7 @@ def get_data_from_csv(file_path):
     return df
 
 # Directory Path
-directory_path = r"D:\Git\Mindwatch-CE-Project\Results\Sleeping"
+directory_path = r"D:\Git\Mindwatch-CE-Project\Results\StandingOnBed"
 
 # List all CSV files in the directory
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]
@@ -26,8 +26,8 @@ file_path = os.path.join(directory_path, selected_file)
 df = get_data_from_csv(file_path)
 
 # Create line chart for 'Sleeping Probability (Yes)'
-st.write('Sleeping Probability (Yes) Graph')
-st.line_chart(df['sleeping Probability (Yes)'].rename('Probability (Yes)').reset_index(drop=True))
+st.write('Standing on bed Probability Graph')
+st.line_chart(df['standing_on_bed Probability (Yes)'].rename('Probability standing').reset_index(drop=True))
 
 # Checkbox for showing/hiding the data table
 show_data_table = st.checkbox("Show Data Table")
