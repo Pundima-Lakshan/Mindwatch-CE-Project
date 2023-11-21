@@ -21,6 +21,13 @@ def analyze_head_pose(video_path,min_duration,max_duration):
         # Extract the matched groups
         start_year, start_month, start_day, start_hour, start_minute, start_second, end_year, end_month, end_day, end_hour, end_minute, end_second = map(int, match.groups())
 
+    # Combine hours, minutes, and seconds into an integer in the format HHMMSS
+    start_time = start_hour * 10000 + start_minute * 100 + start_second
+    end_time = end_hour * 10000 + end_minute * 100 + end_second
+
+    if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration) or (end_time<max_duration and start_time>=min_duration)):
+        return 0
+
     
     output_directory = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\head_pose_analysis\percentage'
     output_directory2 = 'D:\Git\Mindwatch-CE-Project\my_streamlit_app\data\Head Pose'
@@ -48,10 +55,6 @@ def analyze_head_pose(video_path,min_duration,max_duration):
 
     # Before the while loop
     direction_data = []
-
-    # Define the duration range (in seconds)
-    # min_duration = 30  # Minimum duration
-    # max_duration = 50  # Maximum duration
 
     # Initialize variables to track the total duration and forward duration
     total_duration = 0
@@ -207,30 +210,8 @@ def analyze_head_pose(video_path,min_duration,max_duration):
     cv2.destroyAllWindows()
 
 # Example usage:
-video_path = 'D:\\downloadd\\video\\cam1_20231121120005_20231121120102.mp4'
-min_duration = 120200
-max_duration = 120204
+#video_path = 'D:\\downloadd\\video\\cam1_20231121120005_20231121120102.mp4'
+#min_duration = 120200
+#max_duration = 120204
 
-# Extract the file name from the path
-file_name = os.path.basename(video_path)
-
-# Define the regex pattern
-pattern = r'cam1_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).mp4'
-
-# Match the pattern in the file name
-match = re.match(pattern, file_name)
-
-if match:
-    # Extract the matched groups
-    start_year, start_month, start_day, start_hour, start_minute, start_second, end_year, end_month, end_day, end_hour, end_minute, end_second = map(int, match.groups())
-
-# Combine hours, minutes, and seconds into an integer in the format HHMMSS
-start_time = start_hour * 10000 + start_minute * 100 + start_second
-end_time = end_hour * 10000 + end_minute * 100 + end_second
-
-print(start_time,end_time)
-
-if((end_time>max_duration and start_time<=max_duration) or (end_time>min_duration and start_time<=min_duration) or (end_time<max_duration and start_time>=min_duration)):
-    analyze_head_pose(video_path,min_duration,max_duration)
-else:
-    print(0)
+#analyze_head_pose(video_path,min_duration,max_duration)
