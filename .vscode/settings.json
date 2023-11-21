@@ -76,5 +76,8 @@
         ]
     },
     "editor.suggest.snippetsPreventQuickSuggestions": false,
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "python.analysis.extraPaths": [
+        "./Functions"
+    ]
 }

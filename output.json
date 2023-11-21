@@ -1,0 +1,7 @@
+{
+    "Input Directory": "E:\\violenceDetection",
+    "Shaking Detection": true,
+    "Gaze Detection": true,
+    "Aggressive Behavior Detection": true,
+    "Laying Detection": true
+}
