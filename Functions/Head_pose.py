@@ -136,7 +136,7 @@ def analyze_head_pose(video_path,min_duration,max_duration):
                     time_temp = duration + start_second
                     if(time_temp>= 60):
                         time_temp = time_temp-60
-                        time_minute + 1
+                        time_minute =+ 1
                         if(time_minute >=60):
                             time_minute = time_minute-1
                             time_hour = time_hour +1
