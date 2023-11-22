@@ -11,15 +11,13 @@ error = False
 thread_manager_path = "thread_manager.py"
 output_json_file = "output.json"
 
-# Title
-st.title("Home")
 
 # General Settings
 st.subheader("General Settings", divider="grey")
 
 # Input file directory
 input_directory = st.text_input(
-    "Input File(s) Directory:", help="Enter the input directory"
+    "Input File(s) Directory:", help="Enter the input directory", value="D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\Videos"
 )
 if input_directory and not os.path.isdir(input_directory):
     st.error("The provided folder does not exist. Please provide a valid folder path.")
@@ -35,27 +33,21 @@ Aggressive_Behavior_Detection_cb = st.checkbox(
 )
 
 Head_Pose_Detection_cb = st.checkbox(
-    "Head Pose Detection",
-    value=True,
-    key="Head_Pose_Detection_disabled"
+    "Head Pose Detection", value=True, key="Head_Pose_Detection_disabled"
 )
 
 Laying_Detection_cb = st.checkbox(
-    "Laying Detection",
-    value=True,
-    key="Laying_Detection_disabled"
+    "Laying Detection", value=True, key="Laying_Detection_disabled"
 )
 
 Mood_Detection_cb = st.checkbox(
-    "Mood Detection",
-    value=True,
-    key="Mood_Detection_disabled"
+    "Mood Detection", value=True, key="Mood_Detection_disabled"
 )
 
 Standing_On_Bed_Detection_cb = st.checkbox(
     "Standing on the Bed Detection",
     value=True,
-    key="Standing_On_Bed_Detection_disabled"
+    key="Standing_On_Bed_Detection_disabled",
 )
 
 if not (
@@ -90,19 +82,25 @@ Aggressive_Behavior_Detection_frames_to_analyze = st.number_input(
 
 # Head Pose Detection Settings
 st.subheader("Head Pose Detection Settings", divider="grey")
-Visiting_Time_Start_with_colon = st.time_input("Doctor's Visiting Time Start", datetime.time(8, 30),
-                                               disabled=not (Head_Pose_Detection_cb),)
+Visiting_Time_Start_with_colon = st.time_input(
+    "Doctor's Visiting Time Start",
+    datetime.time(8, 30),
+    disabled=not (Head_Pose_Detection_cb),
+)
 Visiting_Time_Start = str(Visiting_Time_Start_with_colon).replace(":", "")
 
-Visiting_Time_End_with_colon = st.time_input("Doctor's Visiting Time End", datetime.time(10, 30),
-                                             disabled=not (Head_Pose_Detection_cb),)
+Visiting_Time_End_with_colon = st.time_input(
+    "Doctor's Visiting Time End",
+    datetime.time(10, 30),
+    disabled=not (Head_Pose_Detection_cb),
+)
 Visiting_Time_End = str(Visiting_Time_End_with_colon).replace(":", "")
 
 # Laying Detection Settings
-#st.subheader("Laying Detection Settings", divider="grey")
+# st.subheader("Laying Detection Settings", divider="grey")
 
 # Mood Detection Settings
-#st.subheader("Mood Detection Settings", divider="grey")
+# st.subheader("Mood Detection Settings", divider="grey")
 
 # Button to generate JSON file
 if st.button("Save Settings", disabled=error):
@@ -112,18 +110,17 @@ if st.button("Save Settings", disabled=error):
         # Create a dictionary based on the selections
         data = {
             "Input_Directory": input_directory,
-
             "Aggressive_Behavior_Detection": Aggressive_Behavior_Detection_cb,
             "Head_Pose_Detection": Head_Pose_Detection_cb,
             "Laying_Detection": Laying_Detection_cb,
             "Mood_Detection": Mood_Detection_cb,
             "Standing_On_Bed_Detection": Standing_On_Bed_Detection_cb,
-            
-            "Aggressive_Behavior_Detection_model": int(Aggressive_Behavior_Detection_model),
+            "Aggressive_Behavior_Detection_model": int(
+                Aggressive_Behavior_Detection_model
+            ),
             "Aggressive_Behavior_Detection_frames_to_analyze": Aggressive_Behavior_Detection_frames_to_analyze,
-            
             "Visiting_Time_Start": int(Visiting_Time_Start),
-            "Visiting_Time_End": int(Visiting_Time_End) ,
+            "Visiting_Time_End": int(Visiting_Time_End),
         }
 
         # Generate JSON file
