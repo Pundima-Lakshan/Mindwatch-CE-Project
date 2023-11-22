@@ -158,6 +158,10 @@ TT_Data/
 W_Data/
 Logs/
 vilt-b32-finetuned-vqa/
+Results/
+Videos/
+
+execution_log.txt
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
