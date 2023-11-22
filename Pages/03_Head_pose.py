@@ -20,10 +20,10 @@ def get_best_option_per_second(df):
     return best_options
 
 # Title
-st.title('Select CSV File for Mood Analysis')
+st.title('Select CSV File for Head Pose Analysis')
 
 # Directory Path
-directory_path = r"Results\Head pose"
+directory_path = r"Results\\Head_pose"
 
 # List all CSV files in the directory
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]

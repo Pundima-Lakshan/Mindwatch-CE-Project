@@ -106,18 +106,23 @@ if __name__ == "__main__":
     threads = []
     for video_file in video_files:
         if aggressive_behavior_detectionJS and not is_already_executed(video_file, "aggressive_behavior_detection"):
+            print("aggressive_behavior_detection")
             thread = threading.Thread(target=aggressive_behavior_detection, args=(video_file,))
             threads.append(thread)
         if head_pose_detectionJS and not is_already_executed(video_file, "head_pose_detection"):
+            print("head_pose_detection")
             thread = threading.Thread(target=head_pose_detection, args=(video_file,))
             threads.append(thread)
         if laying_detectionJS and not is_already_executed(video_file, "laying_detection"):
+            print("laying_detection")
             thread = threading.Thread(target=laying_detection, args=(video_file,))
             threads.append(thread)
         if mood_detectionJS and not is_already_executed(video_file, "mood_detection"):
+            print("mood_detection")
             thread = threading.Thread(target=mood_detection, args=(video_file,))
             threads.append(thread)
         if standing_on_bed_detectionJS and not is_already_executed(video_file, "standing_on_bed_detection"):
+            print("standing_on_bed_detection")
             thread = threading.Thread(target=standing_on_bed_detection, args=(video_file,))
             threads.append(thread)
 

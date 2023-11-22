@@ -8,8 +8,11 @@ import re
 
 
 def analyze_head_pose(video_path, min_duration, max_duration):
+    video_path = r"D:\Projects\1 CEProject\git\Mindwatch-CE-Project\Videos\cam1_20231121125959_20231121130004.mp4"
     # Extract the file name from the path
     file_name = os.path.basename(video_path)
+
+    print(video_path)
 
     # Define the regex pattern
     pattern = r"cam1_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).mp4"
@@ -34,6 +37,8 @@ def analyze_head_pose(video_path, min_duration, max_duration):
             end_second,
         ) = map(int, match.groups())
 
+    print(start_hour)
+
     # Combine hours, minutes, and seconds into an integer in the format HHMMSS
     start_time = start_hour * 10000 + start_minute * 100 + start_second
     end_time = end_hour * 10000 + end_minute * 100 + end_second
@@ -45,7 +50,7 @@ def analyze_head_pose(video_path, min_duration, max_duration):
     ):
         return 0
 
-    output_directory2 = "Results\Head_pose"
+    output_directory2 = "Results\\Head_pose"
 
     mp_face_mesh = mp.solutions.face_mesh
 
