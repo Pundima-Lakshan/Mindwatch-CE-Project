@@ -128,3 +128,4 @@ if __name__ == "__main__":
         thread.join()
 
     open_file_after_execution()
+    print("finished processing all videos")

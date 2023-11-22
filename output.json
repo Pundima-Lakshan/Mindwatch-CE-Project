@@ -1,7 +1,12 @@
 {
-    "Input Directory": "E:\\violenceDetection",
-    "Shaking Detection": true,
-    "Gaze Detection": true,
-    "Aggressive Behavior Detection": true,
-    "Laying Detection": true
+    "Input_Directory": "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\Videos",
+    "Aggressive_Behavior_Detection": true,
+    "Head_Pose_Detection": true,
+    "Laying_Detection": true,
+    "Mood_Detection": true,
+    "Standing_On_Bed_Detection": true,
+    "Aggressive_Behavior_Detection_model": 16,
+    "Aggressive_Behavior_Detection_frames_to_analyze": 10,
+    "Visiting_Time_Start": 83000,
+    "Visiting_Time_End": 103000
 }

@@ -165,3 +165,7 @@ TT_Data/
 W_Data/
 Logs/
 vilt-b32-finetuned-vqa/
+Results/
+Videos/
+
+execution_log.txt
