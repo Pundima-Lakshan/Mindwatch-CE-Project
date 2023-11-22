@@ -28,7 +28,7 @@ file_path = os.path.join(directory_path, selected_file)
 df = get_data_from_csv(file_path)
 
 # Draw line chart for 'Violence Probability'
-st.title('Violence Probability Graph')
+st.write('Violence Probability Graph')
 st.line_chart(df['Violence Probability'].rename('Probability').reset_index(drop=True))
 
 # Checkbox for showing/hiding the data table

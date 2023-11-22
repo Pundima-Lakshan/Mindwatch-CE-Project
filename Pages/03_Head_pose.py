@@ -40,8 +40,8 @@ df = get_data_from_csv(file_path)
 # Display the DataFrame and Best Option DataFrame side by side
 if df is not None:
     # Create a plot using Plotly Express
-    st.write("Best Option per Second:")
-    fig = px.line(get_best_option_per_second(df), x='Time(HH:MM:SS)', y='Direction', title='Best Option per Second')
+    st.write(" ")
+    fig = px.line(get_best_option_per_second(df), x='Time(HH:MM:SS)', y='Direction', title='Head Pose per Second:')
     fig.update_layout(width=1200)
     fig.update_xaxes(type='category')  # Update the x-axis time format
     st.plotly_chart(fig)
@@ -55,14 +55,14 @@ if df is not None:
     # Data Preview
     if show_table_preview:
         with col1:
-            st.write("Data Preview:")
+            st.write("Data Preview according to frame:")
             # Display only 'Time ' and 'Direction' columns, with the time part extracted
             TimeCategory=df['Time '].dt.strftime('%H:%M:%S')
              # Display only 'TimeCategory' and 'Direction' columns
             st.write(df[['Time(HH:MM:SS)', 'Direction']])
 
         with col2:
-            st.write("Best Option per Second:")
+            st.write("Data Preview according to time:")
             best_options_df = get_best_option_per_second(df)
             st.write(best_options_df)
 
@@ -87,7 +87,7 @@ all_data['Time(HH:MM:SS)'] = all_data['Time '].dt.strftime('%H:%M:%S')
 best_options_all_data = get_best_option_per_second(all_data)
 
 # Create a line chart for 'Best Option per Second' for aggregated data
-fig_all_data = px.line(best_options_all_data, x='Time(HH:MM:SS)', y='Direction', title='Best Option per Second (Aggregated)')
+fig_all_data = px.line(best_options_all_data, x='Time(HH:MM:SS)', y='Direction', title='Summary of Head Pose for all video:')
 fig_all_data.update_layout(width=1200)  # Set the width to your desired value
 fig_all_data.update_xaxes(type='category')  # Update the x-axis time format
 
