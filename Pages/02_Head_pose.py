@@ -73,6 +73,7 @@ if df is not None:
             direction_counts = df['Direction'].value_counts()
             st.bar_chart(direction_counts)
 
+
 # Add another graph for data from all CSV files in the directory
 st.write(" ")
 all_data = pd.concat([get_data_from_csv(os.path.join(directory_path, file)).assign(File=file) for file in csv_files])
@@ -83,17 +84,16 @@ all_data['Time '] = pd.to_datetime(all_data['Time '], format='%H:%M:%S')
 # Extract the time part and create 'TimeCategory' column
 all_data['Time(HH:MM:SS)'] = all_data['Time '].dt.strftime('%H:%M:%S')
 
-fig_all_data = px.line(all_data, x='Time(HH:MM:SS)', y='Direction', title='Data from all CSV files')
+# Find the best option per second for aggregated data
+best_options_all_data = get_best_option_per_second(all_data)
 
-# Increase the width of the graph
+# Create a line chart for 'Best Option per Second' for aggregated data
+fig_all_data = px.line(best_options_all_data, x='Time(HH:MM:SS)', y='Direction', title='Best Option per Second (Aggregated)')
 fig_all_data.update_layout(width=1200)  # Set the width to your desired value
-
-# Update the x-axis format
-fig_all_data.update_xaxes(type='category')
+fig_all_data.update_xaxes(type='category')  # Update the x-axis time format
 
 # Show the plot
 st.plotly_chart(fig_all_data)
-
 
 
 
