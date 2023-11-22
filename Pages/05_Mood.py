@@ -3,6 +3,8 @@ import pandas as pd
 import ast
 import os
 
+st.set_page_config(layout="centered", page_title="MindWatch")
+
 # Function to get the mood with the highest probability
 def get_highest_mood(mood_list):
     mood_list = ast.literal_eval(mood_list)
@@ -10,7 +12,7 @@ def get_highest_mood(mood_list):
     return highest_mood[0]
 
 # Directory Path
-directory_path = r"D:\Git\Mindwatch-CE-Project\Results\Mood"
+directory_path = r"Results\Mood"
 
 # List all CSV files in the directory
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]

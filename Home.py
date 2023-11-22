@@ -5,6 +5,8 @@ import os
 import subprocess
 import datetime
 
+st.set_page_config(layout="centered", page_title="MindWatch")
+
 # Initialize error variable
 error = False
 

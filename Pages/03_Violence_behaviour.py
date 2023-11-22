@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import os
 
+st.set_page_config(layout="wide", page_title="MindWatch")
+
 # Function to load data from CSV file
 def get_data_from_csv(file_path):
     df = pd.read_csv(file_path)

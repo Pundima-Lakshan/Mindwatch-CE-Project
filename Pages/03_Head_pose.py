@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+st.set_page_config(layout="wide", page_title="MindWatch")
+
 def get_data_from_csv(file_path):
     try:
         df = pd.read_csv(file_path)
@@ -17,14 +19,11 @@ def get_best_option_per_second(df):
     best_options = df.groupby('Time(HH:MM:SS)')['Direction'].agg(lambda x: x.mode().iloc[0]).reset_index()
     return best_options
 
-# Set page configuration
-st.set_page_config(page_title="Head Pose Dashboard", page_icon=":pinched_fingers:", layout="wide")
-
 # Title
-st.title("Head Pose Dashboard")
+st.title('Select CSV File for Mood Analysis')
 
 # Directory Path
-directory_path = r"D:\Git\Mindwatch-CE-Project\Results\Head pose"
+directory_path = r"Results\Head pose"
 
 # List all CSV files in the directory
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]
