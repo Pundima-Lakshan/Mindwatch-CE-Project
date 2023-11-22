@@ -6,7 +6,7 @@
     "data_sets_path": "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\TT_Data",
     "weights_path": "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\W_Data",
     "logs_path": "D:\\Projects\\1 CEProject\\git\\Mindwatch-CE-Project\\Logs",
-    "actions": "billrolling, shivering",
+    "actions": "wave, clap",
     "no_sequences": 30,
     "sequence_length": 30,
     "start_folder": 0,

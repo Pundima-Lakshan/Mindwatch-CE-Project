@@ -138,5 +138,6 @@ if start_button:
                     )
 
         cap.release()
+        st.info("Data Collection Completed")
 
     cap.release()

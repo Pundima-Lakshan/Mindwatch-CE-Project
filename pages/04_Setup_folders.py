@@ -37,13 +37,13 @@ start_button = st.button("START")
 state = st.empty()
 
 DATA_PATH = os.path.join(DATA_PATH)
-actions = np.array(actions.split(", "))
+actions_list = np.array(actions.split(", "))
 
 isError = False
 
 if start_button:
     with st.spinner("Creating Folders..."):
-        for action in actions:
+        for action in actions_list:
             if isError:
                 break
 
@@ -62,6 +62,17 @@ if start_button:
                     state.error(f"An unexpected error occurred: {str(e)}")
                     isError = True
                     break
+
+        # save new info to CONFIG File
+        config_data["data_path"] = DATA_PATH
+        config_data["actions"] = actions
+        config_data["no_sequences"] = no_sequences
+        config_data["sequence_length"] = sequence_length
+
+        print(config_data)
+
+        with open(CONFIG_FILE, "w") as file:
+            json.dump(config_data, file, indent=4)
 
         if not isError:
             state.success("Done")
