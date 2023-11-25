@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import plotly.express as px
 
 st.set_page_config(layout="wide", page_title="MindWatch")
 
@@ -16,7 +17,7 @@ directory_path = r"Results\StandingOnBed"
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]
 
 # Streamlit app
-st.title('Select CSV File and Display Data')
+st.title("Standing on bed probabilites")
 
 # File selection dropdown
 selected_file = st.selectbox("Select a CSV file", csv_files)
@@ -29,7 +30,14 @@ df = get_data_from_csv(file_path)
 
 # Create line chart for 'Sleeping Probability (Yes)'
 st.write('Standing on bed Probability Graph')
-st.line_chart(df['standing_on_bed Probability (Yes)'].rename('Probability standing').reset_index(drop=True))
+
+fig = px.line(
+    df,
+    x="Frame Number",
+    y="standing_on_bed Probability (Yes)",
+)
+fig.update_layout(yaxis_range=[0, 1])
+st.plotly_chart(fig, use_container_width=True)
 
 # Checkbox for showing/hiding the data table
 show_data_table = st.checkbox("Show Data Table")

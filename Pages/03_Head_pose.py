@@ -20,7 +20,7 @@ def get_best_option_per_second(df):
     return best_options
 
 # Title
-st.title('Select CSV File for Head Pose Analysis')
+st.title("Head posing directions")
 
 # Directory Path
 directory_path = r"Results\\Head_pose"

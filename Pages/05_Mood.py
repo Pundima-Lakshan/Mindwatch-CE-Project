@@ -18,7 +18,7 @@ directory_path = r"Results\Mood"
 csv_files = [file for file in os.listdir(directory_path) if file.endswith(".csv")]
 
 # Streamlit app
-st.title('Select CSV File for Mood Analysis')
+st.title("Moods")
 
 # File selection dropdown
 selected_file = st.selectbox("Select a CSV file", csv_files)
