@@ -5,8 +5,8 @@ import threading
 import time
 import subprocess
 from Functions import Aggressive_behavior_detection
-from Functions import Head_pose 
-from Functions import sleeping 
+from Functions import Head_pose
+from Functions import sleeping
 from Functions import mood
 from Functions import standing_on_bed
 
